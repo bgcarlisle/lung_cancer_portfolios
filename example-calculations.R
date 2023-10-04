@@ -123,18 +123,6 @@ os_plot <- ggplot(
     ) +
     geom_vline(
         xintercept = 1
-    ) +
-    geom_vline(
-        xintercept = 0.75,
-        linetype = "dashed"
-    ) +
-    geom_vline(
-        xintercept = 0.7,
-        linetype = "dashed"
-    ) +
-    geom_vline(
-        xintercept = 0.65,
-        linetype = "dashed"
     )
 
 pdf(
