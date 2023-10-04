@@ -61,7 +61,9 @@ if (! file.exists("os_meta.rds")) {
     saveRDS(os_trials, "os_trials.rds")
     message("Saved os_meta.rds and os_trials.rds")
 } else {
-    message("Whoa partner, those files are already on disk! You sure you want to write over them?")
+    os_meta <- readRDS("os_meta.rds")
+    os_trials <- readRDS("os_trials.rds")
+    message("Read os_meta.rds and os_trials.rds from disk")
 }
 
 ## OS
