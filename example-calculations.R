@@ -113,7 +113,7 @@ os_plot <- ggplot(
     ) +
     scale_x_continuous(
         breaks = seq(0, 3.5, 0.25),
-        limits = c(0, 1.25)
+        limits = c(0.25, 1.25)
     ) +
     labs(
         x = "Hazard ratio",
