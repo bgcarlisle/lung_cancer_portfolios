@@ -63,6 +63,7 @@ pfs_trials <- trials %>%
 ## (If you want to recalculate, you'll have to delete the .rds files)
 
 if (! file.exists("os_meta.rds")) {
+
     os_meta <- bayesmeta(
         y = log(os_trials$hr),
         sigma = os_trials$se,
@@ -71,13 +72,30 @@ if (! file.exists("os_meta.rds")) {
             dhalfnormal(t, scale=0.5)
         }
     )
+    
+    pfs_meta <- bayesmeta(
+        y = log(pfs_trials$hr),
+        sigma = pfs_trials$se,
+        labels = pfs_trials$studylabel,
+        tau.prior = function(t){
+            dhalfnormal(t, scale=0.5)
+        }
+    )
+    
     saveRDS(os_meta, "os_meta.rds")
     saveRDS(os_trials, "os_trials.rds")
-    message("Saved os_meta.rds and os_trials.rds")
+    
+    saveRDS(os_meta, "pfs_meta.rds")
+    saveRDS(os_trials, "pfs_trials.rds")
+    
+    message("Saved os_meta.rds, os_trials.rds, pfs_meta.rds and pfs_trial.rds")
 } else {
     os_meta <- readRDS("os_meta.rds")
     os_trials <- readRDS("os_trials.rds")
-    message("Read os_meta.rds and os_trials.rds from disk")
+    
+    pfs_meta <- readRDS("pfs_meta.rds")
+    pfs_trials <- readRDS("pfs_trials.rds")
+    message("Read os_meta.rds, os_trials.rds, pfs_meta.rds and pfs_trial.rds from disk")
 }
 
 ## OS
@@ -148,4 +166,78 @@ os_plot
 dev.off()
 
 print(os_plot)
+## PFS
+pfs_results <- tibble(
+    study_label = pfs_meta$labels,
+    original_hr = exp(pfs_meta$theta[1,1:pfs_meta$k]) %>% as.numeric(),
+    original_ci_lower = pfs_trials$ci_lower,
+    original_ci_upper = pfs_trials$ci_upper,
+    shrinkage_hr = exp(pfs_meta$theta[5,1:pfs_meta$k]) %>% as.numeric(),
+    shrinkage_ci_lower = exp(pfs_meta$theta[7,1:pfs_meta$k]) %>% as.numeric(),
+    shrinkage_ci_upper = exp(pfs_meta$theta[8,1:pfs_meta$k]) %>% as.numeric()
+) %>%
+    mutate(rank = row_number())
 
+pfs_results_original <- pfs_results %>%
+    select(rank, study_label, original_hr, original_ci_lower, original_ci_upper) %>%
+    rename(hr = original_hr) %>%
+    rename(ci_lower = original_ci_lower) %>%
+    rename(ci_upper = original_ci_upper) %>%
+    mutate(estimate = "Original")
+
+pfs_results_shrinkage <- pfs_results %>%
+    select(rank, study_label, shrinkage_hr, shrinkage_ci_lower, shrinkage_ci_upper) %>%
+    rename(hr = shrinkage_hr) %>%
+    rename(ci_lower = shrinkage_ci_lower) %>%
+    rename(ci_upper = shrinkage_ci_upper) %>%
+    mutate(estimate = "Shrinkage")
+
+pfs_plot_data <- pfs_results_original %>%
+    bind_rows(pfs_results_shrinkage)
+
+pfs_plot <- ggplot(
+    aes(
+        x = hr,
+        y = rank,
+        xmin = ci_lower,
+        xmax = ci_upper,
+        colour = estimate
+    ),
+    data = pfs_plot_data
+) +
+    geom_point() +
+    geom_errorbar() +
+    scale_y_discrete(
+        limits = pfs_plot_data$rank,
+        labels = pfs_plot_data$study_label
+    ) +
+    scale_x_continuous(
+        breaks = seq(0, 3.5, 0.25),
+        limits = c(0.25, 1.25)
+    ) +
+    labs(
+        x = "Hazard ratio",
+        y = "",
+        colour = "Estimate",
+        title = "Original and shrinkage-corrected PFS effect size estimates for all trials of lung cancer therapy in our sample"
+    ) +
+    geom_vline(
+        xintercept = 1
+    )
+
+pdf(
+    "pfs-all.pdf",
+    width = 10,
+    height = 5
+)
+pfs_plot
+dev.off()
+
+pdf(
+    "combined.pdf",
+    width = 10,
+    height = 5
+)
+os_plot
+pfs_plot
+dev.off()
