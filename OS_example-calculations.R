@@ -165,7 +165,6 @@ pdf(
 os_plot
 dev.off()
 
-print(os_plot)
 ## PFS
 pfs_results <- tibble(
     study_label = pfs_meta$labels,
