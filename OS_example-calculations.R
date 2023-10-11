@@ -2,6 +2,8 @@ library(tidyverse)
 library(bayesmeta)
 library(ggplot2)
 
+pilot <- read_csv("nccn_pilot_data.csv")
+
 pivotal <- tribble(
     ~nctid, ~endpoint, ~hr, ~ci_lower, ~ci_upper, ~p_value, ~studylabel,
     "NCT02537418", "os", 0.86, 0.72, 1.02, 0.075, "Johnson 2023",
