@@ -2,23 +2,7 @@ library(tidyverse)
 library(bayesmeta)
 library(ggplot2)
 
-pilot <- read_csv("nccn_pilot_data.csv")
-
-pivotal <- tribble(
-    ~nctid, ~endpoint, ~hr, ~ci_lower, ~ci_upper, ~p_value, ~studylabel,
-    "NCT02537418", "os", 0.86, 0.72, 1.02, 0.075, "Johnson 2023",
-    "NCT02998528", "os", 0.57, 0.30, 1.07, 0.05, "Forde 2022",
-    "NCT00322452", "os", 0.91, 0.76, 1.10, 0.05, "Mok 2009",
-    "NCT02296125", "os", 0.63, 0.45, 0.88, 0.007, "Soria 2018",
-    "NCT00000005", "os", 0.80, 0.70, 0.90, 0.05, "Smith 2005",
-    "NCT00000006", "os", 0.55, 0.30, 0.80, 0.05, "Smith 2006",
-    "NCT02537418", "pfs", 0.46, 0.32, 0.82, 0.03, "Johnson 2023",
-    "NCT02998528", "pfs", 0.57, 0.30, 1.07, 0.05, "Forde 2022",
-    "NCT00322452", "pfs", 0.91, 0.76, 1.10, 0.05, "Mok 2009",
-    "NCT02296125", "pfs", 0.63, 0.45, 0.88, 0.007, "Soria 2018",
-    "NCT00000005", "pfs", 0.80, 0.70, 0.90, 0.05, "Smith 2005",
-    "NCT00000006", "pfs", 0.55, 0.30, 0.80, 0.05, "Smith 2006"
-)
+pivotal <- read_csv("nccn_pilot_clean_formatted.csv")
 
 nonpivotal <- tribble(
     ~nctid, ~endpoint, ~hr, ~ci_lower, ~ci_upper, ~p_value, ~studylabel,
