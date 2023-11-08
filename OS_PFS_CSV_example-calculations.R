@@ -4,27 +4,10 @@ library(ggplot2)
 
 pivotal <- read_csv("nccn_pilot_clean_formatted.csv")
 
-nonpivotal <- tribble(
-    ~nctid, ~endpoint, ~hr, ~ci_lower, ~ci_upper, ~p_value, ~studylabel,
-    "NCT00000007", "os", 0.9, 0.80, 1.00, 0.04, "Jones 2001",
-    "NCT00000008", "os", 0.9, 0.85, 0.95, 0.04, "Jones 2002",
-    "NCT00000009", "os", 0.5, 0.40, 0.60, 0.05, "Jones 2003",
-    "NCT00000010", "os", 0.6, 0.45, 0.85, 0.04, "Jones 2004",
-    "NCT00000011", "os", 0.7, 0.55, 0.95, 0.04, "Jones 2005",
-    "NCT00000012", "os", 0.9, 0.85, 0.95, 0.04, "Jones 2006",
-    "NCT00000007", "pfs", 0.3, 0.20, 0.40, 0.05, "Jones 2001",
-    "NCT00000008", "pfs", 0.9, 0.85, 0.95, 0.04, "Jones 2002",
-    "NCT00000009", "pfs", 0.5, 0.40, 0.60, 0.05, "Jones 2003",
-    "NCT00000010", "pfs", 0.6, 0.45, 0.85, 0.04, "Jones 2004",
-    "NCT00000011", "pfs", 0.7, 0.55, 0.95, 0.04, "Jones 2005",
-    "NCT00000012", "pfs", 0.9, 0.85, 0.95, 0.04, "Jones 2006"
-)
+nonpivotal <- read_csv("nccn_dummy_data_final.csv")
 
 pivotal <- pivotal %>%
     mutate(pivotal = TRUE)
-
-nonpivotal <- nonpivotal %>%
-    mutate(pivotal = FALSE)
 
 trials <- pivotal %>%
     bind_rows(nonpivotal) %>%
@@ -135,7 +118,7 @@ os_plot <- ggplot(
         x = "Hazard ratio",
         y = "",
         colour = "Estimate",
-        title = "Original and shrinkage-corrected OS effect size estimates for all trials of lung cancer therapy in our sample"
+        title = "Original and shrinkage-corrected OS effect size estimates for pivotal trials of lung cancer therapy in our sample"
     ) +
     geom_vline(
         xintercept = 1
@@ -202,7 +185,7 @@ pfs_plot <- ggplot(
         x = "Hazard ratio",
         y = "",
         colour = "Estimate",
-        title = "Original and shrinkage-corrected PFS effect size estimates for all trials of lung cancer therapy in our sample"
+        title = "Original and shrinkage-corrected PFS effect size estimates for pivotal trials of lung cancer therapy in our sample"
     ) +
     geom_vline(
         xintercept = 1
